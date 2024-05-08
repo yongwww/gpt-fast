@@ -357,6 +357,7 @@ def main(
             torch.profiler._utils._init_for_cuda_graphs()
             prof = torch.profiler.profile()
         with prof:
+            print(f"yongwww prompt: {prompt}\nencoded: {encoded}")
             y, metrics = generate(
                 model,
                 encoded,
@@ -366,7 +367,7 @@ def main(
                 interactive=interactive,
                 callback=callback,
                 temperature=temperature,
-                top_k=top_k,
+                # top_k=top_k,
             )
             aggregate_metrics['accept_counts'].append(metrics['accept_counts'])
         if i == -1:
@@ -389,10 +390,13 @@ def main(
         aggregate_metrics['tokens_per_sec'].append(tokens_sec)
         print(f"Time for inference {i + 1}: {t:.02f} sec total, {tokens_sec:.02f} tokens/sec")
         print(f"Bandwidth achieved: {model_size * tokens_sec / 1e9:.02f} GB/s")
+        print(f"yongwww tokens_generated: {tokens_generated}")
     print("==========")
     if is_speculative:
+        print(f"yongwww aggregate_metrics['accept_counts']: {aggregate_metrics['accept_counts']}")
         counts_aggregated = [sum(i) for i in zip(*aggregate_metrics['accept_counts'])]
         acceptance_probs = [i/sum(counts_aggregated) for i in counts_aggregated]
+        print(f"yongwww counts_aggregated: {counts_aggregated}")
         print(f"Acceptance probs: {acceptance_probs}")
         print(f"Mean Accepted: {sum([idx * i for idx, i in enumerate(counts_aggregated)])/sum(counts_aggregated)}")
 
